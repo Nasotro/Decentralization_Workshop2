@@ -1,0 +1,24 @@
+name: Deploy to IPFS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to IPFS
+        env:
+          PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
+          PINATA_SECRET_API_KEY: ${{ secrets.PINATA_SECRET_API_KEY }}
+        run: |
+          npx @pinata/sdk pinFromFS('./path/to/your/website') --pinataApiKey $PINATA_API_KEY --pinataSecretApiKey $PINATA_SECRET_API_KEY
