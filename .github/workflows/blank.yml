@@ -6,16 +6,22 @@ on:
       - main
 
 jobs:
-  deploy:
+  hello_world_job:
     runs-on: ubuntu-latest
-
+    name: Doing test deploy to Pinata
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Deploy to IPFS
-        env:
-          PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
-          PINATA_SECRET_API_KEY: ${{ secrets.PINATA_SECRET_API_KEY }}
-        run: |
-          npx @pinata/sdk pinFromFS('./path/to/your/website') --pinataApiKey $PINATA_API_KEY --pinataSecretApiKey $PINATA_SECRET_API_KEY
+      - uses: actions/checkout@v2.1.0
+      - name: Pinata deploy action step
+        id: deploy
+        uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.4
+        with:
+          pin-name: 'TESTING (v1.6.3)'
+          path: './.github/workflows/site2test'
+          pinata-api-key: ${{ secrets.PINATA_API_KEY }}
+          pinata-secret-api-key: ${{ secrets.PINATA_SECRET_API_KEY }}
+          verbose: true
+          remove-old: false
+          
+      # Use the output from the `deploy` step
+      - name: Get the output hash
+        run: echo "The hash was ${{ steps.deploy.outputs.hash }}"
